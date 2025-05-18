@@ -1,53 +1,56 @@
-(() => {
-  let playing = true;
-  let activeHole = 1;
-  let molesKilled = 0;
-  let molesLost = 0;
+const holes = document.querySelectorAll('.hole');
+const deadCounter = document.getElementById('dead');
+const lostCounter = document.getElementById('lost');
 
-  const deadSpan = document.getElementById('dead');
-  const lostSpan = document.getElementById('lost');
+let dead = 0;
+let lost = 0;
+let gameTimer;
 
-  const stop = () => { playing = false; };
-  const getHole = index => document.getElementById(`hole${index}`);
-  const deactivateHole = index => getHole(index).className = 'hole';
-  const activateHole = index => getHole(index).className = 'hole hole_has_mole';
+const resetGame = () => {
+    dead = 0;
+    lost = 0;
+    deadCounter.textContent = dead;
+    lostCounter.textContent = lost;
+    clearInterval(gameTimer);
+    startGameTimer();
+};
 
-  for (let i = 1; i <= 9; i++) {
-    const hole = getHole(i);
-    hole.addEventListener('click', () => {
-      if (hole.classList.contains('hole_has_mole')) {
-        molesKilled++;
-        deadSpan.textContent = molesKilled;
-        deactivateHole(i);
+const checkEndGame  = () => {
 
-        if (molesKilled >= 10) {
-          alert('Вы победили!');
-          stop();
-        }
-      } else {
-        if(playing){
-          molesLost++;
-          lostSpan.textContent = molesLost;
-          if (molesLost >= 5) {
-            alert('Вы проиграли!');
-            stop();
-          }
-        }
-      }
-    });
-  }
+    if (dead >= 10) {
+        alert('Вы победили');
+        resetGame();
 
-  const next = () => {
-    if (!playing) {
-      return;
+    } else if (lost >= 5) {
+        alert('Вы проиграли');
+        resetGame();
     }
+};
 
-    deactivateHole(activeHole);
-    activeHole = Math.floor(1 + Math.random() * 9);
-    activateHole(activeHole);
+const incrementLost = () => {
+    lost++;
+    lostCounter.textContent = lost;
+    checkEndGame();
+};
 
-    setTimeout(next, 800);
-  };
+const startGameTimer= () => {
+    gameTimer = setInterval(incrementLost, 1000);
+};
 
-  next();
-})();
+holes.forEach(hole => {
+
+    hole.addEventListener('click', () => {
+        clearInterval(gameTimer);
+        startGameTimer();
+
+        if (hole.classList.contains('hole_has-mole')) {
+            dead++;
+            deadCounter.textContent = dead;
+            hole.classList.remove('hole_has-mole');
+            checkEndGame();
+        } else {
+        }
+    });
+});
+
+startGameTimer();        
