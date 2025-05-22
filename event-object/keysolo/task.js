@@ -16,16 +16,22 @@ class Game {
     this.lossElement.textContent = 0;
   }
 
-  registerEvents() {
-    /*
-      TODO:
-      Написать обработчик события, который откликается
-      на каждый введённый символ.
-      В случае правильного ввода символа вызываем this.success()
-      При неправильном вводе символа - this.fail();
-      DOM-элемент текущего символа находится в свойстве this.currentSymbol.
-     */
-  }
+registerEvents() {
+  document.addEventListener('keyup', (event) => {
+    
+    if (!this.currentSymbol) return;
+
+    const pressedKey = event.key;
+    const currentSymbolText = this.currentSymbol.textContent;
+
+    if (pressedKey.toLowerCase() === currentSymbolText.toLowerCase()) {
+      this.success();
+
+    } else {
+      this.fail();
+    }
+  });
+}
 
   success() {
     if(this.currentSymbol.classList.contains("symbol_current")) this.currentSymbol.classList.remove("symbol_current");
@@ -91,4 +97,3 @@ class Game {
 }
 
 new Game(document.getElementById('game'))
-
